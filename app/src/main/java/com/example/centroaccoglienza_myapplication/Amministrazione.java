@@ -6,7 +6,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
-
+import com.google.android.material.tabs.TabLayoutMediator;
 
 
 public class Amministrazione extends AppCompatActivity {
@@ -20,36 +20,33 @@ public class Amministrazione extends AppCompatActivity {
         setContentView(R.layout.activity_amministrazione);
 
         tabLayout= findViewById(R.id.tab_layout);
-        viewPager2=findViewById(R.id.view_pager);
-        myViewPageAdapter= new MyViewPageAdapter(this);
 
-
+        ViewPager2 viewPager2 = findViewById(R.id.view_pager);
         viewPager2.setAdapter(new MyViewPageAdapter(this));
-        viewPager2.setOffscreenPageLimit(1);
+        viewPager2.setOffscreenPageLimit(3);
+
+        viewPager2.setUserInputEnabled(false);
 
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager2.setCurrentItem(tab.getPosition());
-            }
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-
-        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                tabLayout.selectTab(tabLayout.getTabAt(position));
-            }
-        });
+        new TabLayoutMediator(tabLayout, viewPager2,
+                (tab, position) -> {
+                    // Set tab text or icon as needed
+                    switch (position) {
+                        case 0:
+                            tab.setText("Dati");
+                            break;
+                        case 1:
+                            tab.setText("Posizione");
+                            break;
+                        case 2:
+                            tab.setText("Servizi");
+                            break;
+                        case 3:
+                            tab.setText("Video");
+                            break;
+                    }
+                }).attach();
     }
 }

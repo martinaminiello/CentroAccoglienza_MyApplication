@@ -28,13 +28,19 @@
         android:backgroundTint="#FDF6FE"
         android:foregroundTint="#FD9D50"
         app:tabIndicatorColor="#076AEC"
+        app:tabMode="fixed"
         app:tabSelectedTextColor="#FE9E50"
         app:tabTextColor="#74FE9E50"> <!-- Adjust the layout_below attribute -->
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Informazioni"></com.google.android.material.tabs.TabItem>
+            android:text="Dati"></com.google.android.material.tabs.TabItem>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Posizione"></com.google.android.material.tabs.TabItem>
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"

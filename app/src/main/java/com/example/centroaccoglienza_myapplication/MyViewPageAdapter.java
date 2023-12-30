@@ -8,8 +8,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 
 import com.example.centroaccoglienza_myapplication.fragments.InformazioniFragment;
-import com.example.centroaccoglienza_myapplication.fragments.ServiziFragment;
+import com.example.centroaccoglienza_myapplication.fragments.PosizioneFragment;
 import com.example.centroaccoglienza_myapplication.fragments.VideoFragment;
+import com.example.centroaccoglienza_myapplication.fragments.ServiziFragment;
+
 
 public class MyViewPageAdapter extends FragmentStateAdapter {
     public MyViewPageAdapter(@NonNull FragmentActivity fragmentActivity) {
@@ -24,8 +26,10 @@ public class MyViewPageAdapter extends FragmentStateAdapter {
             case 0:
                 return new InformazioniFragment();
             case 1:
-                return new ServiziFragment();
+                return new PosizioneFragment();
             case 2:
+                return new ServiziFragment();
+            case 3:
                 return new VideoFragment();
             default:
                 return new InformazioniFragment();
@@ -34,7 +38,7 @@ public class MyViewPageAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 4;
     }
 
 }
