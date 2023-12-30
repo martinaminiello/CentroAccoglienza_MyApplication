@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@android:style/Widget.TextView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="#FE9E50">
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="16dp"
+        android:text="Asil app"
+
+        android:textColor="#FDFDFD"
+        android:textSize="24sp" />
+
+    <LinearLayout
+        android:id="@+id/itemlayout"
+        android:layout_width="381dp"
+        android:layout_height="212dp"
+        android:layout_below="@id/toolbar"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <Button
+            android:id="@+id/btnCartellaClinica"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#076AEC"
+            android:elevation="12dp"
+            android:onClick="addItemAction"
+            android:text="Visualizza cartella clinica"
+            android:translationZ="19dp" />
+
+        <Button
+            android:id="@+id/btnApriContenitore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#076AEC"
+            android:elevation="12dp"
+            android:onClick="addItemAction"
+            android:text="Apri Contenitore"
+            android:translationZ="19dp" />
+
+        <Button
+            android:id="@+id/btnVisita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#076AEC"
+            android:elevation="12dp"
+            android:onClick="addItemAction"
+            android:text="Effettua visita"
+            android:translationZ="19dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnAmministrazione"
+        android:layout_width="226dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="97dp"
+        android:layout_marginTop="588dp"
+        android:layout_marginEnd="88dp"
+        android:layout_marginBottom="87dp"
+        android:backgroundTint="#076AEC"
+        android:elevation="12dp"
+        android:onClick="addItemAction"
+        android:text="Amministrazione"
+        android:translationZ="19dp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="27dp"
+        android:layout_marginBottom="540dp"
+        app:srcCompat="@drawable/stethoscope_icon_2316460_1280" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="27dp"
+        android:layout_marginBottom="184dp"
+        app:srcCompat="@drawable/_07009" />
+
+
+</RelativeLayout>
