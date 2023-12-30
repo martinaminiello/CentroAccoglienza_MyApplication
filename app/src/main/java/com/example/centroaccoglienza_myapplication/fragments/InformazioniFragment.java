@@ -10,11 +10,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.centroaccoglienza_myapplication.R;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class InformazioniFragment extends Fragment {
@@ -27,6 +32,7 @@ public class InformazioniFragment extends Fragment {
     EditText editDescr;
 
     View view;
+    Button saveButton;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     DocumentReference documentRef = db.collection("CentroAccoglienza").document("C001");
 
@@ -42,8 +48,11 @@ public class InformazioniFragment extends Fragment {
         editTel=view.findViewById(R.id.editTel);
         editLink=view.findViewById(R.id.editLink);
         editDescr=view.findViewById(R.id.editDescription);
+         saveButton = view.findViewById(R.id.saveBtn);
 
         fetchDataCentre();
+
+        saveButton.setOnClickListener(v -> saveDataToFirestore());
 
         return view;
     }
@@ -157,6 +166,30 @@ public class InformazioniFragment extends Fragment {
         });
     }
 
+    private void saveDataToFirestore() {
+        String nome = editNome.getText().toString();
+        String indirizzo = editIndirizzo.getText().toString();
+        String link = editLink.getText().toString();
+        String email = editEmail.getText().toString();
+        String tel = editTel.getText().toString();
+        String descr = editDescr.getText().toString();
 
+        // Create a map with the new values
+        Map<String, Object> newData = new HashMap<>();
+        newData.put("Nome", nome);
+        newData.put("Indirizzo", indirizzo);
+        newData.put("Sito web", link);
+        newData.put("Email", email);
+        newData.put("Telefono", tel);
+        newData.put("Descrizione", descr);
+
+        // Update the Firestore document
+        documentRef.update(newData)
+                .addOnSuccessListener(aVoid ->{
+                    Log.d(TAG, "Document updated successfully");
+                    Toast.makeText(getContext(), "I dati sono stati aggiornati!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Errore: " + e.getMessage()));
+    }
 
 }

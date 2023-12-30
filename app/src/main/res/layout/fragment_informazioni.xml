@@ -13,10 +13,11 @@
 
 
         <Button
+            android:id="@+id/saveBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-
+            android:onClick="saveDataToFirestore"
             android:layout_marginTop="750dp"
             android:layout_marginEnd="211dp"
             android:layout_marginBottom="30dp"
@@ -61,8 +62,10 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:inputType="textMultiLine"
-                android:lines="4"
-                android:minLines="4"
+                android:textSize="15dp"
+                android:textAlignment="center"
+                android:lines="5"
+                android:minLines="5"
                 android:padding="7dp" />
 
 
