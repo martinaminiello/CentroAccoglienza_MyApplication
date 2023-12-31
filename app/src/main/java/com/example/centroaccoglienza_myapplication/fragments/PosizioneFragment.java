@@ -127,7 +127,7 @@ public class PosizioneFragment extends Fragment {
         documentRef.update(data)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Chosen position saved to Firestore successfully");
-                    Toast.makeText(getContext(), "Chosen position saved", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Posizione memorizzata!", Toast.LENGTH_SHORT).show();
 
                     // Remove all existing items from the ItemizedIconOverlay
                     itemizedOverlay.removeAllItems();
