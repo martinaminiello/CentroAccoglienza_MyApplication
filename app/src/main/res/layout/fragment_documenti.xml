@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:backgroundTint="#427C9F"
+        android:backgroundTint="#076aec"
         android:layout_alignParentTop="true"
         android:layout_marginStart="26dp"
         android:layout_marginTop="36dp"
@@ -21,10 +21,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/selectFile"
-        android:backgroundTint="#427C9F"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="128dp"
-        android:layout_marginTop="61dp"
+        android:layout_marginTop="72dp"
+        android:backgroundTint="#076aec"
         android:text="Upload" />
 
     <TextView
