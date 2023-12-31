@@ -31,6 +31,8 @@ public class GeocodingTask extends AsyncTask<String, Void, GeoPoint> {
     private MapView map;
     View view;
 
+    private double savedZoomLevel = -1.0;
+
     public GeocodingTask(MapView mapView, View fragmentView) {
         this.map = mapView;
         this.view = fragmentView;
@@ -86,7 +88,9 @@ public class GeocodingTask extends AsyncTask<String, Void, GeoPoint> {
 
             if (boundingBox != null && mapController != null) {
                 GeoPoint currentCenter = boundingBox.getCenter();
-                double zoomLevel = 20.0;  // Adjust the zoom level as needed
+
+                // Check if a zoom level is saved, and use it instead of the default
+                double zoomLevel = savedZoomLevel != -1.0 ? savedZoomLevel : 20.0;
 
                 // Set the desired zoom level
                 mapController.zoomTo(zoomLevel);
@@ -97,6 +101,8 @@ public class GeocodingTask extends AsyncTask<String, Void, GeoPoint> {
                 // Optionally, animate to the new center
                 mapController.animateTo(centerPoint);
 
+                // Save the zoom level for future use
+                savedZoomLevel = zoomLevel;
             }
         }
     }

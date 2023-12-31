@@ -28,8 +28,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.MapEventsOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +44,10 @@ public class PosizioneFragment extends Fragment {
     private String locationQuery = "";
     SearchView searchView;
     TextView coordinates;
+    private double savedZoomLevel = -1.0;
+
+    private ItemizedIconOverlay<OverlayItem> itemizedOverlay;
+    private GeoPoint savedCenter;
     DocumentReference documentRef = db.collection("CentroAccoglienza").document("C001");
 
     @Override
@@ -62,12 +69,14 @@ public class PosizioneFragment extends Fragment {
         map = (MapView) view.findViewById(R.id.mapView);
 
 
+
         MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(new MapEventsReceiver() {
             @Override
             public boolean singleTapConfirmedHelper(GeoPoint p) {
                 // Handle the single tap event here
                 Log.d(TAG, "Map tapped at: " + p.getLatitude() + ", " + p.getLongitude());
 
+                savedZoomLevel = map.getZoomLevelDouble();
                 // Save the chosen position in Firestore
                 saveChosenPositionToFirestore(p);
                 updateCoordinatesTextView( p);
@@ -113,32 +122,59 @@ public class PosizioneFragment extends Fragment {
         Map<String, Object> data = new HashMap<>();
         data.put("latitude", chosenPosition.getLatitude());
         data.put("longitude", chosenPosition.getLongitude());
+        data.put("zoomlevel", savedZoomLevel);
 
         documentRef.update(data)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Chosen position saved to Firestore successfully");
                     Toast.makeText(getContext(), "Chosen position saved", Toast.LENGTH_SHORT).show();
+
+                    // Remove all existing items from the ItemizedIconOverlay
+                    itemizedOverlay.removeAllItems();
+
+                    // Add the chosen position to the ItemizedIconOverlay
+                    OverlayItem overlayItem = new OverlayItem("Chosen Position", "Description", chosenPosition);
+                    itemizedOverlay.addItem(overlayItem);
+
+                    // Refresh the map view
+                    map.invalidate();
                 })
+
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error saving chosen position to Firestore", e);
                     Toast.makeText(getContext(), "Error saving chosen position", Toast.LENGTH_SHORT).show();
                 });
     }
+
     private void retrieveStoredPositionFromFirestore() {
         documentRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         Double latitude = documentSnapshot.getDouble("latitude");
                         Double longitude = documentSnapshot.getDouble("longitude");
+                        Double storedZoomLevel = documentSnapshot.getDouble("zoomlevel");
 
                         if (latitude != null && longitude != null) {
                             GeoPoint storedPosition = new GeoPoint(latitude, longitude);
 
-                            // Initialize the map after setting the center
-                            initializeMap(storedPosition);
+                            // Initialize the map after setting the center and zoom level
+                            if (storedZoomLevel != null) {
+                                initializeMap(storedPosition, storedZoomLevel);
+                            } else {
+                                initializeMap(storedPosition, -1.0); // Default zoom level if not saved
+                            }
+
+                            updateCoordinatesTextView(storedPosition);
+                            // Add the chosen position to the ItemizedIconOverlay
+                            OverlayItem overlayItem = new OverlayItem("Chosen Position", "Description", storedPosition);
+                            itemizedOverlay.addItem(overlayItem);
+
+                            // Refresh the map view
+                            map.invalidate();
+
                         } else {
                             // If no valid position is stored, initialize the map with a default position
-                            initializeMap(null);
+                            initializeMap(null, -1.0);
                         }
                     }
                 })
@@ -148,7 +184,7 @@ public class PosizioneFragment extends Fragment {
     }
 
     // Method to set up the map
-    private void initializeMap(GeoPoint centerPoint) {
+    private void initializeMap(GeoPoint centerPoint, double zoomLevel) {
         map = view.findViewById(R.id.mapView);
 
         if (map != null) {
@@ -156,8 +192,19 @@ public class PosizioneFragment extends Fragment {
             map.setBuiltInZoomControls(true);
             map.setMultiTouchControls(true);
 
+            // Initialize the ItemizedIconOverlay
+            itemizedOverlay = new ItemizedIconOverlay<>(new ArrayList<>(), getResources().getDrawable(org.osmdroid.library.R.drawable.marker_default), null, getContext());
+
+            // Add the overlay to the map
+            map.getOverlays().add(itemizedOverlay);
+
             IMapController mapController = map.getController();
-            mapController.setZoom(9.5);
+
+            if (zoomLevel != -1.0) {
+                mapController.setZoom(zoomLevel);
+            } else {
+                mapController.setZoom(9.5);  // Default zoom level if not saved
+            }
 
             if (centerPoint != null) {
                 mapController.setCenter(centerPoint);
@@ -175,21 +222,25 @@ public class PosizioneFragment extends Fragment {
         }
     }
 
-    public void onResume(){
+    @Override
+    public void onResume() {
         super.onResume();
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
-        map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
+        map.onResume();
+
+        if (savedCenter != null && savedZoomLevel != -1.0) {
+            // Restore the saved center and zoom level
+            map.getController().setCenter(savedCenter);
+            map.getController().setZoom(savedZoomLevel);
+        }
     }
 
-    public void onPause(){
+    @Override
+    public void onPause() {
         super.onPause();
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().save(this, prefs);
-        map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
+        map.onPause();
+
+        // Save the current center and zoom level
+        savedCenter = (GeoPoint) map.getMapCenter();
+        savedZoomLevel = map.getZoomLevelDouble();
     }
 }
