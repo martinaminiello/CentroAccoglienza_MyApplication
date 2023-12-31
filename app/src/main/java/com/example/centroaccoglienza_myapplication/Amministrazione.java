@@ -1,5 +1,6 @@
 package com.example.centroaccoglienza_myapplication;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -7,7 +8,6 @@ import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-
 
 public class Amministrazione extends AppCompatActivity {
     TabLayout tabLayout;
@@ -19,16 +19,15 @@ public class Amministrazione extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_amministrazione);
 
-        tabLayout= findViewById(R.id.tab_layout);
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager2 = findViewById(R.id.view_pager);
 
-        ViewPager2 viewPager2 = findViewById(R.id.view_pager);
-        viewPager2.setAdapter(new MyViewPageAdapter(this));
-        viewPager2.setOffscreenPageLimit(3);
+        myViewPageAdapter = new MyViewPageAdapter(this);
+        viewPager2.setAdapter(myViewPageAdapter);
 
+        myViewPageAdapter.setupTabLayout(tabLayout, viewPager2);
+        viewPager2.setOffscreenPageLimit(4);
         viewPager2.setUserInputEnabled(false);
-
-
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
 
         new TabLayoutMediator(tabLayout, viewPager2,
                 (tab, position) -> {
@@ -38,13 +37,16 @@ public class Amministrazione extends AppCompatActivity {
                             tab.setText("Dati");
                             break;
                         case 1:
-                            tab.setText("Posizione");
+                            tab.setText("Mappa");
                             break;
                         case 2:
-                            tab.setText("Servizi");
+                            tab.setText("Pdf");
                             break;
                         case 3:
                             tab.setText("Video");
+                            break;
+                        case 4:
+                            tab.setText("Servizi");
                             break;
                     }
                 }).attach();
