@@ -3,9 +3,13 @@ package com.example.centroaccoglienza_myapplication.fragments;
 import static android.app.Activity.RESULT_OK;
 
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +41,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClickListener{
+public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClickListener, VideoAdapter.OnDownloadClickListener{
 
     private static final int PICK_VIDEO_REQUEST = 1;
     private static final int PICK_VIDEO_REQUEST_GEN = 1;
@@ -69,10 +74,16 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
         storageReference = FirebaseStorage.getInstance().getReference();
 
         videoListGen = new ArrayList<>();
-        videoAdapterGen = new VideoAdapter(videoListGen, this, "videos");
+        videoAdapterGen = new VideoAdapter(videoListGen, this, this, "videos");
 
         videoListDonna = new ArrayList<>();
-        videoAdapterDonna = new VideoAdapter(videoListDonna, (VideoAdapter.OnDeleteClickListener) this, "videosDonna");
+        videoAdapterDonna = new VideoAdapter(videoListDonna, this, this, "videosDonna");
+
+        videoAdapterGen.setOnDeleteClickListener(this);  // Set onDeleteClickListener
+        videoAdapterGen.setOnDownloadClickListener(this);  // Set onDownloadClickListener
+
+        videoAdapterDonna.setOnDeleteClickListener(this);  // Set onDeleteClickListener
+        videoAdapterDonna.setOnDownloadClickListener(this);  // Set onDownloadClickListener
 
         recyclerViewGen.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewGen.setAdapter(videoAdapterGen);
@@ -105,6 +116,8 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
             }
         });
 
+
+
         return view;
     }
 
@@ -113,6 +126,45 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
         // Handle the delete click event here
         // You can call the method to show the delete confirmation dialog
         showDeleteConfirmationDialog(videoModel, targetFolder);
+    }
+
+    @Override
+    public void onDownloadClick(VideoModel videoModel) {
+        // Handle the download click event here
+
+        // Get the video URL
+        String videoUrl = videoModel.getVideoUrl();
+
+        // Create a DownloadManager request
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoUrl));
+        request.setTitle("Downloading Video");
+        request.setDescription(videoModel.getName());
+
+        // Set the destination directory for the downloaded file
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, videoModel.getName());
+
+        // Get the DownloadManager service
+        DownloadManager downloadManager = (DownloadManager) requireContext().getSystemService(Context.DOWNLOAD_SERVICE);
+
+        // Enqueue the download and get the download ID
+        long downloadId = downloadManager.enqueue(request);
+
+        // Optionally, you can listen for download completion using a BroadcastReceiver
+        // Uncomment the following lines if you want to listen for download completion
+
+    BroadcastReceiver onComplete = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+            if (downloadId == id) {
+                // Download completed, handle accordingly
+                Toast.makeText(getContext(), "Download completed", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    // Register the BroadcastReceiver
+    requireContext().registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
     }
 
     private void openVideoChooser(int requestCode) {
