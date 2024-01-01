@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -14,11 +15,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.example.centroaccoglienza_myapplication.fragments.OnDeleteClickListener;
 import com.example.centroaccoglienza_myapplication.R;
@@ -48,6 +51,7 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
     private RecyclerView recyclerViewGen;
     private RecyclerView recyclerViewDonna;
     private ProgressDialog progressDialog;
+    private TextView textVideoName;
     private String targetFolder;
 
     @Override
@@ -55,11 +59,13 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_video, container, false);
+        View item_view=inflater.inflate(R.layout.item_video, container, false);
 
         Button uploadButton = view.findViewById(R.id.uploadButton);
         Button uploadButton2 = view.findViewById(R.id.uploadButton2);
         recyclerViewGen = view.findViewById(R.id.recyclerViewGen);
         recyclerViewDonna = view.findViewById(R.id.recyclerViewDonna);
+        textVideoName=item_view.findViewById(R.id.NomeVideo);
         storageReference = FirebaseStorage.getInstance().getReference();
 
         videoListGen = new ArrayList<>();
@@ -123,12 +129,15 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
         if (resultCode == RESULT_OK && data != null) {
             selectedVideoUri = data.getData();
             if (selectedVideoUri != null) {
+                // Get the original file name
+                String originalFileName = getFileName(selectedVideoUri);
+
                 if (requestCode == PICK_VIDEO_REQUEST_GEN) {
                     targetFolder = "videos";  // Set targetFolder here
-                    uploadVideo(selectedVideoUri, "videos");
+                    uploadVideo(selectedVideoUri, originalFileName, "videos");
                 } else if (requestCode == PICK_VIDEO_REQUEST_DONNA) {
                     targetFolder = "videosDonna";  // Set targetFolder here
-                    uploadVideo(selectedVideoUri, "videosDonna");
+                    uploadVideo(selectedVideoUri, originalFileName, "videosDonna");
                 }
             } else {
                 Toast.makeText(getContext(), "Failed to get selected video", Toast.LENGTH_SHORT).show();
@@ -136,12 +145,39 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
         }
     }
 
+    private String getFileName(Uri uri) {
+        String result = null;
+        Cursor cursor = null;
 
-    private void uploadVideo(Uri videoUri, String targetFolder) {
+        try {
+            cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+
+                if (displayNameIndex != -1) {
+                    result = cursor.getString(displayNameIndex);
+                } else {
+                    // If DISPLAY_NAME column is not available, fallback to the last segment of the URI
+                    result = uri.getLastPathSegment();
+                }
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return result;
+    }
+
+    private void uploadVideo(Uri videoUri, String originalFileName, String targetFolder) {
         if (videoUri != null) {
-            String videoFileName = "video_" + System.currentTimeMillis() + ".mp4";
+            String videoFileName = originalFileName;
 
             progressDialog.show();
+
+
 
             // Upload the video to Firebase Storage
             storageReference.child(targetFolder + "/" + videoFileName).putFile(videoUri)
@@ -161,14 +197,14 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
                     .addOnFailureListener(exception -> {
                         Toast.makeText(getContext(), "Failed to upload video", Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
-                    }) .addOnProgressListener(snapshot -> {
+                    })
+                    .addOnProgressListener(snapshot -> {
                         // Update progress in the progress dialog
                         double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
                         progressDialog.setProgress((int) progress);
                     });
         }
     }
-
     private void fetchVideoUrlsGen() {
         videoListGen.clear();
 
@@ -178,9 +214,11 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
                 .addOnSuccessListener(listResult -> {
                     for (StorageReference item : listResult.getItems()) {
                         item.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
-                            VideoModel videoModel = new VideoModel(downloadUrl.toString());
+                            String fileName = item.getName();
+                            VideoModel videoModel = new VideoModel(downloadUrl.toString(),fileName );
                             videoListGen.add(videoModel);
                             videoAdapterGen.notifyDataSetChanged();
+
                         }).addOnFailureListener(exception -> {
                             Toast.makeText(getContext(), "Failed to get download URL", Toast.LENGTH_SHORT).show();
                         });
@@ -200,7 +238,8 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
                 .addOnSuccessListener(listResult -> {
                     for (StorageReference item : listResult.getItems()) {
                         item.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
-                            VideoModel videoModel = new VideoModel(downloadUrl.toString());
+                            String fileName = item.getName();
+                            VideoModel videoModel = new VideoModel(downloadUrl.toString(),fileName);
                             videoListDonna.add(videoModel);
                             videoAdapterDonna.notifyDataSetChanged();
                         }).addOnFailureListener(exception -> {

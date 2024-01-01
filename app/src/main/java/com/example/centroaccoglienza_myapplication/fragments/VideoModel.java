@@ -3,12 +3,18 @@ package com.example.centroaccoglienza_myapplication.fragments;
 public class VideoModel {
     private String videoUrl;
 
-    public VideoModel() {
-        // Default constructor required for Firebase
+    String name;
+
+
+
+    public VideoModel(String videoUrl,String name) {
+
+        this.videoUrl = videoUrl;
+        this.name=name;
     }
 
-    public VideoModel(String videoUrl) {
-        this.videoUrl = videoUrl;
+    public String getName() {
+        return name;
     }
 
     public String getVideoUrl() {

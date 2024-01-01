@@ -42,6 +42,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         VideoModel videoModel = videoList.get(position);
+        holder.textNomeVideo.setText(videoModel.getName());
 
         // Use Glide or another image loading library to load video thumbnails
         Glide.with(holder.itemView.getContext())
@@ -69,10 +70,13 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         ImageView videoThumbnailImageView;
         public ImageButton deleteButton;
 
+        TextView textNomeVideo;
+
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
             videoThumbnailImageView = itemView.findViewById(R.id.videoThumbnailImageView);
             deleteButton = itemView.findViewById(R.id.deleteButton);
+            textNomeVideo=itemView.findViewById(R.id.NomeVideo);
         }
 
 
