@@ -3,7 +3,9 @@ package com.example.centroaccoglienza_myapplication.fragments;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,9 +18,18 @@ import java.util.List;
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
 
     private List<VideoModel> videoList;
+    private OnDeleteClickListener onDeleteClickListener;
+    private String targetFolder; // New member variable
 
-    public VideoAdapter(List<VideoModel> videoList) {
+    // Constructor
+    public VideoAdapter(List<VideoModel> videoList, OnDeleteClickListener onDeleteClickListener, String targetFolder) {
         this.videoList = videoList;
+        this.onDeleteClickListener = onDeleteClickListener;
+        this.targetFolder = targetFolder; // Set the targetFolder
+    }
+
+    public interface OnDeleteClickListener {
+        void onDeleteClick(VideoModel videoModel, String targetFolder);
     }
 
     @NonNull
@@ -34,9 +45,19 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         // Use Glide or another image loading library to load video thumbnails
         Glide.with(holder.itemView.getContext())
-                .load(videoModel.getVideoUrl()) // Assuming video URL is a valid image URL
-                .placeholder(R.drawable.video_placeholder) // Placeholder image while loading
+                .load(videoModel.getVideoUrl())
+                .placeholder(R.drawable.video_placeholder)
                 .into(holder.videoThumbnailImageView);
+
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Invoke the method to show the delete confirmation dialog
+                if (onDeleteClickListener != null) {
+                    onDeleteClickListener.onDeleteClick(videoModel, targetFolder);
+                }
+            }
+        });
     }
 
     @Override
@@ -46,10 +67,21 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
         ImageView videoThumbnailImageView;
+        public ImageButton deleteButton;
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
             videoThumbnailImageView = itemView.findViewById(R.id.videoThumbnailImageView);
+            deleteButton = itemView.findViewById(R.id.deleteButton);
+        }
+
+
+    }
+
+    // Add onDeleteClick method to implement the interface
+    public void onDeleteClick(VideoModel videoModel, String targetFolder) {
+        if (onDeleteClickListener != null) {
+            onDeleteClickListener.onDeleteClick(videoModel, targetFolder);
         }
     }
 }

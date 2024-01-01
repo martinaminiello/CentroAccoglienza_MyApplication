@@ -31,6 +31,15 @@
             android:layout_weight="4"
             android:textSize="16dp"
             android:text="TextView" />
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="119dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="@android:drawable/ic_delete"
+            android:textAlignment="center" />
     </LinearLayout>
 
 
