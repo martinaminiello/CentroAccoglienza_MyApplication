@@ -10,7 +10,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
-        app:cardCornerRadius="12dp">
+        app:cardCornerRadius="20dp">
 
 
         <LinearLayout
@@ -19,8 +19,7 @@
 
             android:background="#27485DD3">
 
-            <ImageView
-                android:id="@+id/videoThumbnailImageView"
+            <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
@@ -29,9 +28,17 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="2"
-                android:adjustViewBounds="true"
-                android:padding="5dp"
-                android:scaleType="centerCrop" />
+                app:cardCornerRadius="12dp">
+
+                <ImageView
+                    android:id="@+id/videoThumbnailImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+
+                    android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/NomeVideo"

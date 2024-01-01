@@ -24,9 +24,8 @@
 
         <Button
             android:id="@+id/uploadButton"
-            android:layout_width="wrap_content"
-            android:layout_height="55dp"
-
+            android:layout_width="103dp"
+            android:layout_height="wrap_content"
 
 
             android:layout_marginTop="2dp"
@@ -40,7 +39,7 @@
     <ScrollView
         android:id="@+id/scrollViewGen"
         android:layout_width="match_parent"
-        android:layout_height="245dp"
+        android:layout_height="226dp"
 
         android:layout_below="@id/Genlayout"
         android:layout_marginTop="-10dp">
@@ -73,8 +72,8 @@
 
         <Button
             android:id="@+id/uploadButton2"
-            android:layout_width="wrap_content"
-            android:layout_height="55dp"
+            android:layout_width="103dp"
+            android:layout_height="wrap_content"
 
 
             android:layout_marginTop="2dp"
