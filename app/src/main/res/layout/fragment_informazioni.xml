@@ -63,9 +63,9 @@
                 android:layout_marginBottom="8dp"
                 android:inputType="textMultiLine"
                 android:textSize="15dp"
-                android:textAlignment="center"
-                android:lines="5"
-                android:minLines="5"
+
+                android:lines="7"
+                android:minLines="4"
                 android:padding="7dp" />
 
 

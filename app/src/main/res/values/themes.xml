@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.CentroAccoglienza_MyApplication" parent="Base.Theme.CentroAccoglienza_MyApplication" />
+
+    <style name="MyTabLayout" parent="Widget.Design.TabLayout">
+        <!-- Customize the tab indicator color -->
+        <item name="tabIndicatorColor">#FF9800</item>
+    </style>
 </resources>

@@ -45,9 +45,7 @@ public class Amministrazione extends AppCompatActivity {
                         case 3:
                             tab.setText("Video");
                             break;
-                        case 4:
-                            tab.setText("Servizi");
-                            break;
+
                     }
                 }).attach();
     }

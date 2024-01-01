@@ -17,7 +17,6 @@ import com.example.centroaccoglienza_myapplication.fragments.DocumentiFragment;
 import com.example.centroaccoglienza_myapplication.fragments.InformazioniFragment;
 import com.example.centroaccoglienza_myapplication.fragments.PosizioneFragment;
 import com.example.centroaccoglienza_myapplication.fragments.VideoFragment;
-import com.example.centroaccoglienza_myapplication.fragments.ServiziFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -50,8 +49,7 @@ public class MyViewPageAdapter extends FragmentStateAdapter {
                 return new DocumentiFragment();
             case 3:
                 return new VideoFragment();
-            case 4:
-                return new ServiziFragment();
+
             default:
                 return new InformazioniFragment();
         }
@@ -59,7 +57,7 @@ public class MyViewPageAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 5;
+        return 4;
     }
 
     public void setupTabLayout(TabLayout tabLayout, ViewPager2 viewPager) {
