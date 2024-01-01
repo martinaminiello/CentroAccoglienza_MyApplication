@@ -2,6 +2,7 @@ package com.example.centroaccoglienza_myapplication.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,11 +18,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.centroaccoglienza_myapplication.R;
-
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +30,13 @@ public class VideoFragment extends Fragment {
     private View view;
     private Uri selectedVideoUri;
     private StorageReference storageReference;
-    private VideoAdapter videoAdapter;
-    private List<VideoModel> videoList;
+    private VideoAdapter videoAdapterGen;
+    private VideoAdapter videoAdapterDonna;
+    private List<VideoModel> videoListGen;
+    private List<VideoModel> videoListDonna;
     private RecyclerView recyclerViewGen;
+    private RecyclerView recyclerViewDonna;
+    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,23 +45,43 @@ public class VideoFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_video, container, false);
 
         Button uploadButton = view.findViewById(R.id.uploadButton);
-        recyclerViewGen=view.findViewById(R.id.recyclerViewGen);
+        Button uploadButton2 = view.findViewById(R.id.uploadButton2);
+        recyclerViewGen = view.findViewById(R.id.recyclerViewGen);
+        recyclerViewDonna = view.findViewById(R.id.recyclerViewDonna);
         storageReference = FirebaseStorage.getInstance().getReference();
 
-        videoList = new ArrayList<>();
-        videoAdapter = new VideoAdapter(videoList);
+        videoListGen = new ArrayList<>();
+        videoAdapterGen = new VideoAdapter(videoListGen);
+
+        videoListDonna = new ArrayList<>();
+        videoAdapterDonna = new VideoAdapter(videoListDonna);
 
         recyclerViewGen.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerViewGen.setAdapter(videoAdapter);
+        recyclerViewGen.setAdapter(videoAdapterGen);
 
+        recyclerViewDonna.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewDonna.setAdapter(videoAdapterDonna);
 
         storageReference = FirebaseStorage.getInstance().getReference();
 
-        fetchVideoUrls();
+        fetchVideoUrlsGen();
+        fetchVideoUrlsDonna();
+
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Uploading video...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openVideoChooser();
+            }
+        });
+
+        uploadButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openVideoChooserDonna();
             }
         });
 
@@ -73,82 +95,100 @@ public class VideoFragment extends Fragment {
         startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_REQUEST);
     }
 
+    private void openVideoChooserDonna() {
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_REQUEST);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK && data != null) {
             selectedVideoUri = data.getData();
-            // Now you can use the selectedVideoUri to work with the user-selected video.
             if (selectedVideoUri != null) {
-                uploadVideoToFirestore(selectedVideoUri);
+                uploadVideo(selectedVideoUri, "videosDonna");
             } else {
                 Toast.makeText(getContext(), "Failed to get selected video", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void uploadVideoToFirestore(Uri videoUri) {
+    private void uploadVideo(Uri videoUri, String targetFolder) {
         if (videoUri != null) {
-            // Create a unique filename for the video
             String videoFileName = "video_" + System.currentTimeMillis() + ".mp4";
 
-            // Get a reference to the location where you want to store the video
-            StorageReference videoRef = storageReference.child("videos/" + videoFileName);
+            progressDialog.show();
 
             // Upload the video to Firebase Storage
-            videoRef.putFile(videoUri)
+            storageReference.child(targetFolder + "/" + videoFileName).putFile(videoUri)
                     .addOnSuccessListener(taskSnapshot -> {
-                        // Video uploaded successfully
                         Toast.makeText(getContext(), "Video uploaded successfully", Toast.LENGTH_SHORT).show();
 
-                        // You can get the download URL of the uploaded video
-                        videoRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                            String videoDownloadUrl = downloadUri.toString();
-                            // Now you can store this download URL in Firestore or perform any other actions
+                        if ("videosDonna".equals(targetFolder)) {
+                            // Fetch videos from "videosDonna" and update the recyclerViewDonna
+                            fetchVideoUrlsDonna();
+                        } else {
+                            // Fetch videos from "videos" and update the recyclerViewGen
+                            fetchVideoUrlsGen();
+                        }
 
-                            // Refresh the video list after uploading
-                            fetchVideoUrls();
-                        });
+                        progressDialog.dismiss();
                     })
                     .addOnFailureListener(exception -> {
-                        // Handle unsuccessful uploads
                         Toast.makeText(getContext(), "Failed to upload video", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                    }) .addOnProgressListener(snapshot -> {
+                        // Update progress in the progress dialog
+                        double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                        progressDialog.setProgress((int) progress);
                     });
         }
     }
 
+    private void fetchVideoUrlsGen() {
+        videoListGen.clear();
 
-    private void fetchVideoUrls() {
-        // Clear the existing list before fetching new videos
-        videoList.clear();
-
-        // Reference to the "videos" folder in Firebase Storage
         StorageReference videosRef = storageReference.child("videos");
 
-        // List all items in the "videos" folder
         videosRef.listAll()
                 .addOnSuccessListener(listResult -> {
                     for (StorageReference item : listResult.getItems()) {
-                        // Get the download URL for each video
                         item.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
-                            // Add the video to the list
                             VideoModel videoModel = new VideoModel(downloadUrl.toString());
-                            videoList.add(videoModel);
-
-                            // Notify the adapter that data has changed
-                            videoAdapter.notifyDataSetChanged();
+                            videoListGen.add(videoModel);
+                            videoAdapterGen.notifyDataSetChanged();
                         }).addOnFailureListener(exception -> {
-                            // Handle failure to get download URL
                             Toast.makeText(getContext(), "Failed to get download URL", Toast.LENGTH_SHORT).show();
                         });
                     }
                 })
                 .addOnFailureListener(exception -> {
-                    // Handle failure to list items in the "videos" folder
                     Toast.makeText(getContext(), "Failed to list videos", Toast.LENGTH_SHORT).show();
                 });
     }
 
+    private void fetchVideoUrlsDonna() {
+        videoListDonna.clear();
 
+        StorageReference videosRef = storageReference.child("videosDonna");
+
+        videosRef.listAll()
+                .addOnSuccessListener(listResult -> {
+                    for (StorageReference item : listResult.getItems()) {
+                        item.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
+                            VideoModel videoModel = new VideoModel(downloadUrl.toString());
+                            videoListDonna.add(videoModel);
+                            videoAdapterDonna.notifyDataSetChanged();
+                        }).addOnFailureListener(exception -> {
+                            Toast.makeText(getContext(), "Failed to get download URL", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                })
+                .addOnFailureListener(exception -> {
+                    Toast.makeText(getContext(), "Failed to list Donna videos", Toast.LENGTH_SHORT).show();
+                });
+    }
 }
