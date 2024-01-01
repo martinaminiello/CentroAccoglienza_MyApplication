@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "825123175692",
-    "firebase_url": "https://asilappdatabasetest-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "asilappdatabasetest",
-    "storage_bucket": "asilappdatabasetest.appspot.com"
+    "project_number": "740236524937",
+    "firebase_url": "https://fullstorage-a39a7-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "fullstorage-a39a7",
+    "storage_bucket": "fullstorage-a39a7.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:825123175692:android:7cf1a948496292ca375d29",
+        "mobilesdk_app_id": "1:740236524937:android:ff1a3bb75c174591367558",
         "android_client_info": {
           "package_name": "com.example.centroaccoglienza_myapplication"
         }
@@ -16,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAOI_HlZI7EbnypzHppX2m0Kp8zuzDYLpA"
+          "current_key": "AIzaSyCTZXhOn1Y-FZa1D_KhORbq_r6KjBe5PiY"
         }
       ],
       "services": {
@@ -27,34 +27,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:825123175692:android:88bbd44b79fdadb7375d29",
+        "mobilesdk_app_id": "1:740236524937:android:3966fa83a40e62ed367558",
         "android_client_info": {
-          "package_name": "com.example.database_test"
+          "package_name": "com.example.nuovocentroaccoglienza"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAOI_HlZI7EbnypzHppX2m0Kp8zuzDYLpA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:825123175692:android:2fa3c8e1b17690f2375d29",
-        "android_client_info": {
-          "package_name": "com.example.spese_myapplication"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAOI_HlZI7EbnypzHppX2m0Kp8zuzDYLpA"
+          "current_key": "AIzaSyCTZXhOn1Y-FZa1D_KhORbq_r6KjBe5PiY"
         }
       ],
       "services": {

@@ -27,6 +27,8 @@ import java.util.List;
 public class VideoFragment extends Fragment {
 
     private static final int PICK_VIDEO_REQUEST = 1;
+    private static final int PICK_VIDEO_REQUEST_GEN = 1;
+    private static final int PICK_VIDEO_REQUEST_DONNA = 2;
     private View view;
     private Uri selectedVideoUri;
     private StorageReference storageReference;
@@ -74,25 +76,27 @@ public class VideoFragment extends Fragment {
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openVideoChooser();
+
+                openVideoChooser(PICK_VIDEO_REQUEST_GEN);
             }
         });
 
         uploadButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openVideoChooserDonna();
+
+                openVideoChooser(PICK_VIDEO_REQUEST_DONNA);
             }
         });
 
         return view;
     }
 
-    private void openVideoChooser() {
+    private void openVideoChooser(int requestCode) {
         Intent intent = new Intent();
         intent.setType("video/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, "Select Video"), requestCode);
     }
 
     private void openVideoChooserDonna() {
@@ -106,15 +110,20 @@ public class VideoFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK && data != null) {
+        if (resultCode == RESULT_OK && data != null) {
             selectedVideoUri = data.getData();
             if (selectedVideoUri != null) {
-                uploadVideo(selectedVideoUri, "videosDonna");
+                if (requestCode == PICK_VIDEO_REQUEST_GEN) {
+                    uploadVideo(selectedVideoUri, "videos");
+                } else if (requestCode == PICK_VIDEO_REQUEST_DONNA) {
+                    uploadVideo(selectedVideoUri, "videosDonna");
+                }
             } else {
                 Toast.makeText(getContext(), "Failed to get selected video", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 
     private void uploadVideo(Uri videoUri, String targetFolder) {
         if (videoUri != null) {
@@ -191,4 +200,6 @@ public class VideoFragment extends Fragment {
                     Toast.makeText(getContext(), "Failed to list Donna videos", Toast.LENGTH_SHORT).show();
                 });
     }
+
+
 }
