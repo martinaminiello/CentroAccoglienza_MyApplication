@@ -256,8 +256,12 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
                 // Now, update the UI by fetching the updated video URLs
                 if ("videosDonna".equals(targetFolder)) {
                     fetchVideoUrlsDonna();
+
+// or
+                    videoAdapterDonna.notifyDataSetChanged();
                 } else {
                     fetchVideoUrlsGen();
+                    videoAdapterGen.notifyDataSetChanged();
                 }
 
                 Toast.makeText(getContext(), "Video eliminato", Toast.LENGTH_SHORT).show();
