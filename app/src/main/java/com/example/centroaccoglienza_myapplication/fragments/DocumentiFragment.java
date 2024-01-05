@@ -313,8 +313,7 @@ public class DocumentiFragment extends Fragment {
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                // Now you have the download URL, you can use it to download the file
-                // In this example, we'll use the URL to open a web browser for demonstration purposes
+
                 String downloadUrl = uri.toString();
                 String filename=uri.getPath();
                 openBrowser(downloadUrl, filename);

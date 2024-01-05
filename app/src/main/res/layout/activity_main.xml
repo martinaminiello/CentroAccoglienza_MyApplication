@@ -28,7 +28,7 @@
 
     <Button
         android:id="@+id/btnVisita"
-        android:layout_width="172dp"
+        android:layout_width="233dp"
         android:layout_height="62dp"
 
 
