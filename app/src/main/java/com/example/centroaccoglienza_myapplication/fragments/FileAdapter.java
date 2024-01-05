@@ -62,7 +62,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle the delete button click
                 if (listener != null) {
                     listener.onDeleteClick(uploadedFile);
                 }

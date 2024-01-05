@@ -62,7 +62,6 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_video, container, false);
         View item_view=inflater.inflate(R.layout.item_video, container, false);
 
@@ -79,11 +78,11 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
         videoListDonna = new ArrayList<>();
         videoAdapterDonna = new VideoAdapter(videoListDonna, this, this, "videosDonna");
 
-        videoAdapterGen.setOnDeleteClickListener(this);  // Set onDeleteClickListener
-        videoAdapterGen.setOnDownloadClickListener(this);  // Set onDownloadClickListener
+        videoAdapterGen.setOnDeleteClickListener(this);
+        videoAdapterGen.setOnDownloadClickListener(this);
 
-        videoAdapterDonna.setOnDeleteClickListener(this);  // Set onDeleteClickListener
-        videoAdapterDonna.setOnDownloadClickListener(this);  // Set onDownloadClickListener
+        videoAdapterDonna.setOnDeleteClickListener(this);
+        videoAdapterDonna.setOnDownloadClickListener(this);
 
         recyclerViewGen.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewGen.setAdapter(videoAdapterGen);
@@ -123,46 +122,36 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
 
     @Override
     public void onDeleteClick(VideoModel videoModel, String targetFolder) {
-        // Handle the delete click event here
-        // You can call the method to show the delete confirmation dialog
+
         showDeleteConfirmationDialog(videoModel, targetFolder);
     }
 
     @Override
     public void onDownloadClick(VideoModel videoModel) {
-        // Handle the download click event here
 
-        // Get the video URL
         String videoUrl = videoModel.getVideoUrl();
 
-        // Create a DownloadManager request
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoUrl));
         request.setTitle("Downloading Video");
         request.setDescription(videoModel.getName());
 
-        // Set the destination directory for the downloaded file
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, videoModel.getName());
 
-        // Get the DownloadManager service
         DownloadManager downloadManager = (DownloadManager) requireContext().getSystemService(Context.DOWNLOAD_SERVICE);
 
-        // Enqueue the download and get the download ID
         long downloadId = downloadManager.enqueue(request);
 
-        // Optionally, you can listen for download completion using a BroadcastReceiver
-        // Uncomment the following lines if you want to listen for download completion
+
 
     BroadcastReceiver onComplete = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
             if (downloadId == id) {
-                // Download completed, handle accordingly
                 Toast.makeText(getContext(), "Download completed", Toast.LENGTH_SHORT).show();
             }
         }
     };
 
-    // Register the BroadcastReceiver
     requireContext().registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
     }
@@ -210,7 +199,6 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
                 if (displayNameIndex != -1) {
                     result = cursor.getString(displayNameIndex);
                 } else {
-                    // If DISPLAY_NAME column is not available, fallback to the last segment of the URI
                     result = uri.getLastPathSegment();
                 }
             }
@@ -231,16 +219,13 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
 
 
 
-            // Upload the video to Firebase Storage
             storageReference.child(targetFolder + "/" + videoFileName).putFile(videoUri)
                     .addOnSuccessListener(taskSnapshot -> {
                         Toast.makeText(getContext(), "Video uploaded successfully", Toast.LENGTH_SHORT).show();
 
                         if ("videosDonna".equals(targetFolder)) {
-                            // Fetch videos from "videosDonna" and update the recyclerViewDonna
                             fetchVideoUrlsDonna();
                         } else {
-                            // Fetch videos from "videos" and update the recyclerViewGen
                             fetchVideoUrlsGen();
                         }
 
@@ -251,7 +236,6 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
                         progressDialog.dismiss();
                     })
                     .addOnProgressListener(snapshot -> {
-                        // Update progress in the progress dialog
                         double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
                         progressDialog.setProgress((int) progress);
                     });
@@ -320,11 +304,9 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
     }
 
     private void deleteVideo(VideoModel videoModel, String targetFolder) {
-        // Get references to Firebase Storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
 
-        // Get the video URL
         String videoUrl = videoModel.getVideoUrl();
         Uri uri = Uri.parse(videoUrl);
         String fileName = uri.getLastPathSegment();
@@ -336,15 +318,10 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
         Log.d("VideoFragment", "Target Folder: " + targetFolder);
         Log.d("VideoFragment", "File Name: " + fileName);
 
-        // Create a reference to the Storage location of the video
         StorageReference videoReference = storageReference.child(targetFolder).child(fileName);
 
-        // Check if the file exists before attempting to delete it
         videoReference.getMetadata().addOnSuccessListener(metadata -> {
-            // File exists, proceed with deletion
             videoReference.delete().addOnSuccessListener(aVoid -> {
-                // Video deleted successfully from Storage
-                // Now, update the UI by fetching the updated video URLs
                 if ("videosDonna".equals(targetFolder)) {
                     fetchVideoUrlsDonna();
 
@@ -357,11 +334,9 @@ public class VideoFragment extends Fragment implements VideoAdapter.OnDeleteClic
 
                 Toast.makeText(getContext(), "Video eliminato", Toast.LENGTH_SHORT).show();
             }).addOnFailureListener(e -> {
-                // Handle failure to delete from Storage
                 Toast.makeText(getContext(), "Failed to delete video: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
         }).addOnFailureListener(e -> {
-            // File does not exist, handle accordingly
             Toast.makeText(getContext(), "File does not exist", Toast.LENGTH_SHORT).show();
         });
     }

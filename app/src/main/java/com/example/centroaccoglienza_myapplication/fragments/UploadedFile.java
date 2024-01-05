@@ -5,7 +5,6 @@ public class UploadedFile {
     private String fileUrl;
 
     public UploadedFile() {
-        // Default constructor required for calls to DataSnapshot.getValue(UploadedFile.class)
     }
 
     public UploadedFile(String fileName, String fileUrl) {

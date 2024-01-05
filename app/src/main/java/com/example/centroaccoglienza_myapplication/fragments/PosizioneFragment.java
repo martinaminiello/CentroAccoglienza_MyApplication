@@ -68,11 +68,9 @@ public class PosizioneFragment extends Fragment {
         MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(new MapEventsReceiver() {
             @Override
             public boolean singleTapConfirmedHelper(GeoPoint p) {
-                // Handle the single tap event here
                 Log.d(TAG, "Map tapped at: " + p.getLatitude() + ", " + p.getLongitude());
 
                 savedZoomLevel = map.getZoomLevelDouble();
-                // Save the chosen position in Firestore
                 saveChosenPositionToFirestore(p);
                 updateCoordinatesTextView( p);
 
@@ -94,10 +92,8 @@ public class PosizioneFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Update the locationQuery when the user submits the query
                 locationQuery = query;
 
-                // Perform geocoding for the submitted query
                 new GeocodingTask(map, view).execute(locationQuery);
 
                 return true;
@@ -105,7 +101,6 @@ public class PosizioneFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Handle text change if needed
                 return false;
             }
         });
@@ -124,14 +119,11 @@ public class PosizioneFragment extends Fragment {
                     Log.d(TAG, "Chosen position saved to Firestore successfully");
                     Toast.makeText(getContext(), "Posizione memorizzata!", Toast.LENGTH_SHORT).show();
 
-                    // Remove all existing items from the ItemizedIconOverlay
                     itemizedOverlay.removeAllItems();
 
-                    // Add the chosen position to the ItemizedIconOverlay
                     OverlayItem overlayItem = new OverlayItem("Chosen Position", "Description", chosenPosition);
                     itemizedOverlay.addItem(overlayItem);
 
-                    // Refresh the map view
                     map.invalidate();
                 })
 
@@ -152,7 +144,6 @@ public class PosizioneFragment extends Fragment {
                         if (latitude != null && longitude != null) {
                             GeoPoint storedPosition = new GeoPoint(latitude, longitude);
 
-                            // Initialize the map after setting the center and zoom level
                             if (storedZoomLevel != null) {
                                 initializeMap(storedPosition, storedZoomLevel);
                             } else {
@@ -160,15 +151,14 @@ public class PosizioneFragment extends Fragment {
                             }
 
                             updateCoordinatesTextView(storedPosition);
-                            // Add the chosen position to the ItemizedIconOverlay
                             OverlayItem overlayItem = new OverlayItem("Chosen Position", "Description", storedPosition);
                             itemizedOverlay.addItem(overlayItem);
 
-                            // Refresh the map view
+
                             map.invalidate();
 
                         } else {
-                            // If no valid position is stored, initialize the map with a default position
+
                             initializeMap(null, -1.0);
                         }
                     }
@@ -178,7 +168,7 @@ public class PosizioneFragment extends Fragment {
                 });
     }
 
-    // Method to set up the map
+
     private void initializeMap(GeoPoint centerPoint, double zoomLevel) {
         map = view.findViewById(R.id.mapView);
 
@@ -187,10 +177,8 @@ public class PosizioneFragment extends Fragment {
             map.setBuiltInZoomControls(true);
             map.setMultiTouchControls(true);
 
-            // Initialize the ItemizedIconOverlay
             itemizedOverlay = new ItemizedIconOverlay<>(new ArrayList<>(), getResources().getDrawable(org.osmdroid.library.R.drawable.marker_default), null, getContext());
 
-            // Add the overlay to the map
             map.getOverlays().add(itemizedOverlay);
 
             IMapController mapController = map.getController();
@@ -198,7 +186,7 @@ public class PosizioneFragment extends Fragment {
             if (zoomLevel != -1.0) {
                 mapController.setZoom(zoomLevel);
             } else {
-                mapController.setZoom(9.5);  // Default zoom level if not saved
+                mapController.setZoom(9.5);
             }
 
             if (centerPoint != null) {
@@ -223,7 +211,6 @@ public class PosizioneFragment extends Fragment {
         map.onResume();
 
         if (savedCenter != null && savedZoomLevel != -1.0) {
-            // Restore the saved center and zoom level
             map.getController().setCenter(savedCenter);
             map.getController().setZoom(savedZoomLevel);
         }
@@ -234,7 +221,6 @@ public class PosizioneFragment extends Fragment {
         super.onPause();
         map.onPause();
 
-        // Save the current center and zoom level
         savedCenter = (GeoPoint) map.getMapCenter();
         savedZoomLevel = map.getZoomLevelDouble();
     }

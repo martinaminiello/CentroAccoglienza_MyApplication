@@ -64,17 +64,14 @@ public class GeocodingTask extends AsyncTask<String, Void, GeoPoint> {
     @Override
     protected void onPostExecute(GeoPoint geoPoint) {
         if (geoPoint != null) {
-            // Handle the obtained GeoPoint
             Log.d(TAG, "Geocoded Location: " + geoPoint.getLatitude() + ", " + geoPoint.getLongitude());
 
 
 
-            // Update the map's center with the obtained GeoPoint
             updateMapCenter(geoPoint);
 
 
         } else {
-            // Handle geocoding failure
             Log.e(TAG, "Geocoding failed");
         }
     }
@@ -89,19 +86,14 @@ public class GeocodingTask extends AsyncTask<String, Void, GeoPoint> {
             if (boundingBox != null && mapController != null) {
                 GeoPoint currentCenter = boundingBox.getCenter();
 
-                // Check if a zoom level is saved, and use it instead of the default
                 double zoomLevel = savedZoomLevel != -1.0 ? savedZoomLevel : 20.0;
 
-                // Set the desired zoom level
                 mapController.zoomTo(zoomLevel);
 
-                // Set the center point
                 mapController.setCenter(centerPoint);
 
-                // Optionally, animate to the new center
                 mapController.animateTo(centerPoint);
 
-                // Save the zoom level for future use
                 savedZoomLevel = zoomLevel;
             }
         }

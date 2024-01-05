@@ -40,7 +40,6 @@ public class InformazioniFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         view= inflater.inflate(R.layout.fragment_informazioni, container, false);
 
         editNome=view.findViewById(R.id.editNome);
@@ -175,7 +174,6 @@ public class InformazioniFragment extends Fragment {
         String tel = editTel.getText().toString();
         String descr = editDescr.getText().toString();
 
-        // Create a map with the new values
         Map<String, Object> newData = new HashMap<>();
         newData.put("Nome", nome);
         newData.put("Indirizzo", indirizzo);
@@ -184,7 +182,6 @@ public class InformazioniFragment extends Fragment {
         newData.put("Telefono", tel);
         newData.put("Descrizione", descr);
 
-        // Update the Firestore document
         documentRef.update(newData)
                 .addOnSuccessListener(aVoid ->{
                     Log.d(TAG, "Document updated successfully");

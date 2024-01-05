@@ -31,7 +31,6 @@ public class Amministrazione extends AppCompatActivity {
 
         new TabLayoutMediator(tabLayout, viewPager2,
                 (tab, position) -> {
-                    // Set tab text or icon as needed
                     switch (position) {
                         case 0:
                             tab.setText("Dati");

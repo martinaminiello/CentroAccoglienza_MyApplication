@@ -62,11 +62,9 @@ public class MyViewPageAdapter extends FragmentStateAdapter {
 
     public void setupTabLayout(TabLayout tabLayout, ViewPager2 viewPager) {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            // Set custom view (icon) for each tab
             View tabView = LayoutInflater.from(context).inflate(R.layout.custom_tab, null);
             ImageView tabIcon = tabView.findViewById(R.id.tab_icon);
 
-            // Set the icon based on the position
             tabIcon.setImageResource(tabIcons[position]);
 
             tab.setCustomView(tabView);

@@ -19,19 +19,18 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     private List<VideoModel> videoList;
     private OnDeleteClickListener onDeleteClickListener;
-    private String targetFolder; // New member variable
+    private String targetFolder;
     private OnDownloadClickListener onDownloadClickListener;
     // Constructor
     public VideoAdapter(List<VideoModel> videoList, OnDeleteClickListener onDeleteClickListener, OnDownloadClickListener onDownloadClickListener, String targetFolder) {
         this.videoList = videoList;
         this.onDeleteClickListener = onDeleteClickListener;
-        this.onDownloadClickListener = onDownloadClickListener; // Initialize the variable
+        this.onDownloadClickListener = onDownloadClickListener;
         this.targetFolder = targetFolder;
     }
 
     public interface OnDownloadClickListener {
 
-        // Add a new method for download click
         void onDownloadClick(VideoModel videoModel);
     }
 
@@ -47,27 +46,22 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         VideoModel videoModel = videoList.get(position);
         holder.textNomeVideo.setText(videoModel.getName());
 
-        // Use Glide or another image loading library to load video thumbnails
         Glide.with(holder.itemView.getContext())
                 .load(videoModel.getVideoUrl())
                 .placeholder(R.drawable.video_placeholder)
                 .into(holder.videoThumbnailImageView);
 
-        // Ensure that the aspect ratio is maintained in the ImageView
         holder.videoThumbnailImageView.setAdjustViewBounds(true);
 
-        // Set a click listener for the filename TextView
         holder.textNomeVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Invoke the method to download the video
                 if (onDeleteClickListener != null) {
                     onDeleteClickListener.onDownloadClick(videoModel);
                 }
             }
         });
 
-        // Set a click listener for the delete button
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,15 +93,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     }
 
-    // Add onDeleteClick method to implement the interface
     public interface OnDeleteClickListener {
         void onDeleteClick(VideoModel videoModel, String targetFolder);
 
-        // Add a new method for download click
         void onDownloadClick(VideoModel videoModel);
     }
 
-       // Add a new method to set the onDeleteClickListener
     public void setOnDeleteClickListener(OnDeleteClickListener onDeleteClickListener) {
         this.onDeleteClickListener = onDeleteClickListener;
     }
