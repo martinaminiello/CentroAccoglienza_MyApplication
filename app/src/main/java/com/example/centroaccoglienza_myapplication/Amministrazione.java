@@ -4,7 +4,10 @@ package com.example.centroaccoglienza_myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -13,6 +16,7 @@ public class Amministrazione extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager2 viewPager2;
     MyViewPageAdapter myViewPageAdapter;
+    ImageView homeIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +25,19 @@ public class Amministrazione extends AppCompatActivity {
 
         tabLayout = findViewById(R.id.tab_layout);
         viewPager2 = findViewById(R.id.view_pager);
+      homeIcon=findViewById(R.id.imageHome);
+
+        homeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(Amministrazione.this, MainActivity.class);
+
+
+                startActivity(intent);
+            }
+
+        });
 
         myViewPageAdapter = new MyViewPageAdapter(this);
         viewPager2.setAdapter(myViewPageAdapter);
@@ -48,4 +65,6 @@ public class Amministrazione extends AppCompatActivity {
                     }
                 }).attach();
     }
+
+
 }

@@ -30,7 +30,8 @@
         app:tabIndicatorColor="#076AEC"
         app:tabMode="fixed"
         app:tabSelectedTextColor="#FE9E50"
-        app:tabTextColor="#74FE9E50"> <!-- Adjust the layout_below attribute -->
+        app:tabTextColor="#74FE9E50">
+
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
@@ -62,17 +63,28 @@
 
     </androidx.viewpager2.widget.ViewPager2>
 
+
+    <ImageView
+        android:id="@+id/imageHome"
+        android:layout_width="54dp"
+        android:layout_height="45dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="9dp"
+        app:srcCompat="@drawable/hhome_removebg_preview" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="33dp"
+        android:layout_marginStart="73dp"
         android:layout_marginTop="16dp"
         android:text="Asil app"
 
         android:textColor="#FDFDFD"
-        android:textSize="24sp" />
+        android:textSize="26sp" />
 
 </RelativeLayout>
