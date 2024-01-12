@@ -20,20 +20,16 @@ import com.example.centroaccoglienza_myapplication.fragments.VideoFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-
+//Adapter che serve a gestire i Fragment( le tab)
 public class MyViewPageAdapter extends FragmentStateAdapter {
-    private final int[] tabIcons = {
-            R.drawable.building,
-            R.drawable.mapicon_removebg_preview,
-            R.drawable.docu_removebg_preview,
-            R.drawable.video_removebg_preview,
-            R.drawable.services_removebg_preview
-    };
+
 
     private final Context context;
 
     public MyViewPageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
+
+        //context serve per fare l'inflate di activity_amministrazione per usare tab_lyout
         this.context = fragmentActivity;
     }
 
@@ -63,9 +59,9 @@ public class MyViewPageAdapter extends FragmentStateAdapter {
     public void setupTabLayout(TabLayout tabLayout, ViewPager2 viewPager) {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             View tabView = LayoutInflater.from(context).inflate(R.layout.custom_tab, null);
-            ImageView tabIcon = tabView.findViewById(R.id.tab_icon);
 
-            tabIcon.setImageResource(tabIcons[position]);
+
+
 
             tab.setCustomView(tabView);
         }).attach();
